@@ -11,7 +11,7 @@ class MainActions(object):
         # Login Aktion
         self.login_action = QAction(QIcon(appctxt.get_resource('Symbols/lock-unlock.png')), "Login", mainWindow)
         self.login_action.setCheckable(False)
-        self.login_action.triggered.connect(login.open_login_dialog)
+        self.login_action.triggered.connect(lambda: login.open_login_dialog(mainWindow))
         self.login_action.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_L))
 
         self.logout_action = QAction(QIcon(appctxt.get_resource('Symbols/lock.png')), "Logout", mainWindow)

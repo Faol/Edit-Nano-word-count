@@ -7,6 +7,7 @@ from uis import toolbars
 import uis.actions as actions
 from uis.toolbars import setupMainToolbar
 from uis.ui_personen import Ui_Personen
+from uis.ui_zahlen import Ui_Zahlen
 
 
 class Ui_MainWindow(object):
@@ -22,9 +23,13 @@ class Ui_MainWindow(object):
         self.setCentralWidget(self.tabWidget)  # erzeugt Widget in der Mitte des Fensters. In diesem Fall das Label
         #Erstellt Personen-Tab
         self.personenTab = Ui_Personen(self)
-        self.personenTab.setupTable(personenManager)
-        self.personenTab.addPerson(personenManager.persons[1])
-        self.tabWidget.addTab(self.personenTab, "Personen")
+        self.personenTab.setObjectName("PersonenTab")
+        self.personenTab.setupTable()
+        self.tabWidget.addTab(self.personenTab, "Infos")
+
+        self.zahlenTab = Ui_Personen(self)
+        self.zahlenTab.setupTable()
+        self.tabWidget.addTab(self.zahlenTab, "Zahlen")
 
         mainActions=actions.MainActions(self,appctxt)
         # erstellt die Toolbar
@@ -47,9 +52,8 @@ class Ui_MainWindow(object):
         #file_submenu.addAction(self.logout_action)
 
         self.retranslateUi(mainWindow)
-
-
-
+    def reloadTab(self,tabname):
+        self.findChild(QTableWidget, tabname).reloadTable()
     def retranslateUi(self, MainWindow):
         _translate = QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow","NaNo Statistik"))

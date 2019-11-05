@@ -1,16 +1,17 @@
 from core import exceptions
+from core import c_nanoAPI as nanoApi
 
 
 #---------------------------------------------------------------------------------
 #Personenklasse enthaelt alle Personen, die im Personenmanager hinzugefuegt wurden
 #---------------------------------------------------------------------------------
 class Person(object):
-    def __init__(self,nick,nanoNick,nanoId,romanTitel=None,romanId=None):
-        self.nick=nick #Forennick
+    def __init__(self,nanoNick,nanoId,romanTitel=None,romanId=None,challengeId=None):
         self.nanoNick=nanoNick #NaNoNick
         self.nanoId=nanoId #Id aus dem NaNo, auch allgemeine Id
         self.romanTitel=romanTitel
         self.romanId=romanId
+        self.challengeId=challengeId
         
 
 class PersonManager(object):
@@ -19,17 +20,25 @@ class PersonManager(object):
         self.api=api
         self.persons={}
         self.personNick={}
+        self.activePerson=None
     def insertPerson(self,person):
         self.persons[person.nanoId]=person
-        self.personNick[person.nick]=person
-    def addNew(self,forenNick,nanoNick):
-        try:
-            id=self.api.getId(nanoNick)
-            
-            self.insertPerson(Person(forenNick,nanoNick,id))
-        except exceptions.AuthError as error:
-            print(error)
-        except exceptions.apiLoadingError as error:
-            print(error)
-    def addTest(self,forenNick,nanoNick,id):
-        self.insertPerson(Person(forenNick, nanoNick, id))
+        self.personNick[person.nanoNick]=person
+    def addNew(self,nanoNick):
+        id = self.api.getId(nanoNick)
+        if id:
+            self.insertPerson(Person(nanoNick,id))
+            return True
+        else:
+            return False
+    def addTest(self,nanoNick,id):
+        self.insertPerson(Person(nanoNick, id))
+    def setActivePerson(self,nanoNick):
+        print("Active Person= "+nanoNick)
+        if nanoNick in self.personNick:
+            self.activePerson=self.personNick[nanoNick]
+        else:
+            if self.addNew(nanoNick):
+                self.activePerson=self.personNick[nanoNick]
+
+personenManager = PersonManager(nanoApi.api)

@@ -7,6 +7,8 @@ from core import exceptions, login
 import json
 
 
+
+
 class NanoApi(object):
     def __init__(self, auth=None):
         self.auth = auth
@@ -22,6 +24,9 @@ class NanoApi(object):
                 msg = "Login successful"
                 #print(msg)
                 self.auth = {"Authorization": response.json()["auth_token"]}
+                print("Logged in")
+                from core.c_person import personenManager
+                personenManager.setActivePerson(username)
                 return True, msg,0
             elif response.status_code == 401:
                 msg = "Wrong username/password. Try again."
@@ -44,12 +49,12 @@ class NanoApi(object):
         self.auth = None
 
     def getId(self, nanoNick):
-        gotId=False
+        id=None
         if self.auth:
             response = requests.get("https://api.nanowrimo.org/users/" + nanoNick, headers=self.auth)
             if response:
                 msg="Id abgerufen"
-                gotId=True
+                id=response.json()["data"]["id"]
             elif response.status_code == 401:
                 msg = "Login abgelaufen. Bitte erneut einloggen."
                 self.apiErrorMessageLogin(msg)
@@ -62,7 +67,7 @@ class NanoApi(object):
         else:
             msg="Du bist nicht eingeloggt. Bitte erst einloggen."
             self.apiErrorMessageLogin(msg)
-        return gotId
+        return id
 
     def fileFromAPI(self, url, speicherort):
         if self.auth:
@@ -96,7 +101,51 @@ class NanoApi(object):
         msgBox.setEscapeButton(QMessageBox.Ok)
         msgBox.accepted.connect(lambda: None)
         msgBox.exec_()
-
+    def getRoman(self,nanoId):
+        projectId=None
+        challengeId=None
+        romanTitel=None
+        if self.auth:
+            response = requests.get("https://api.nanowrimo.org/users/"+str(nanoId)+"/project-challenges", headers=self.auth)
+            if response:
+                msg="Id abgerufen"
+                for key in response.json()["data"]:
+                    if key['attributes']['challenge-id']== 121:
+                        projectId=key['attributes']["project-id"]
+                        challengeId=key['id']
+                        response = requests.get("https://api.nanowrimo.org/projects/" + str(projectId),
+                                                headers=self.auth)
+                        if response:
+                            msg = "Id abgerufen"
+                            romanTitel=response.json()["data"]["attributes"]['title']
+                        elif response.status_code == 401:
+                            msg = "Login abgelaufen. Bitte erneut einloggen."
+                            self.apiErrorMessageLogin(msg)
+                        elif response.status_code == 404:
+                            msg = "Seite existiert nicht."
+                            self.apiErrorMessage(msg)
+                        else:
+                            msg = "Error: Please try again later! (Status Code:" + str(response.status_code) + ")"
+                            self.apiErrorMessage(msg)
+                        break
+                if projectId:
+                    pass
+                else:
+                    msg = "Error: Kein NaNo2019Roman angelegt"
+                    self.apiErrorMessage(msg)
+            elif response.status_code == 401:
+                msg = "Login abgelaufen. Bitte erneut einloggen."
+                self.apiErrorMessageLogin(msg)
+            elif response.status_code == 404:
+                msg = "Seite existiert nicht."
+                self.apiErrorMessage(msg)
+            else:
+                msg = "Error: Please try again later! (Status Code:" + str(response.status_code) + ")"
+                self.apiErrorMessage(msg)
+        else:
+            msg="Du bist nicht eingeloggt. Bitte erst einloggen."
+            self.apiErrorMessageLogin(msg)
+        return projectId,romanTitel,challengeId
 
 
 api = NanoApi()

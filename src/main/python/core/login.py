@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QDialog
 
+
 from core.c_settings import settings
 from uis import ui_login_dialog
 from uis.ui_login_dialog import Ui_LoginDialog
@@ -10,7 +11,7 @@ class Login_dialog(QDialog, Ui_LoginDialog):
         super(Login_dialog,self).__init__(*args,**kwargs)
         self.setupUi(self)
 
-def open_login_dialog(s):
+def open_login_dialog(mainWindow):
     dlg=Login_dialog()
     if dlg.exec_():
         successful, msg, errorCode = nanoApi.api.sign_in(dlg.get_username(),dlg.get_password())
@@ -25,7 +26,8 @@ def open_login_dialog(s):
         settings.saveSettings()
         if successful:
             print(nanoApi.api.auth)
-            nanoApi.api.fileFromAPI("https://api.nanowrimo.org/project-challenges/1937667/project-sessions", "project_Faol")
+            mainWindow.reloadTab("PersonenTab")
+            nanoApi.api.fileFromAPI("https://api.nanowrimo.org/users/917128/project-challenges", "project_challenges_faol2")
         else:
             if errorCode==1:
                 Ui_LoginDialog.loginErrorMessageRetry(msg)

@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import *
 import sys
 
 from core import c_nanoAPI as nanoApi
-from core.c_person import PersonManager
+from core.c_person import personenManager
+from core.c_settings import settings
 from uis.ui_main_window import Ui_MainWindow
 
 if __name__ == '__main__':
@@ -12,9 +13,15 @@ if __name__ == '__main__':
     # --------------------------------
     # bei Programmstart
     # --------------------------------
-    personenManager = PersonManager(nanoApi.api)
-    personenManager.addTest("Faol", "faol", 1)
-    personenManager.addTest("Janika", "winged_charly", 2)
+
+    if settings.autoLogin&settings.saveLogin:
+        successful, msg, errorCode = nanoApi.api.sign_in(settings.benutzername, settings.password)
+
+
+
+    #personenManager.addTest("faol", 1)
+    #personenManager.addTest("winged_charly", 2)
+
 
 
     class MainWindow(QMainWindow, Ui_MainWindow):
