@@ -2,18 +2,19 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+
 from core import login
 
 
 class MainActions(object):
-    def __init__(self,mainWindow):
+    def __init__(self,mainWindow,appctxt):
         # Login Aktion
-        self.login_action = QAction(QIcon("Resources/Symbols/lock-unlock.png"), "Login", mainWindow)
+        self.login_action = QAction(QIcon(appctxt.get_resource('Symbols/lock-unlock.png')), "Login", mainWindow)
         self.login_action.setCheckable(False)
         self.login_action.triggered.connect(login.open_login_dialog)
         self.login_action.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_L))
 
-        self.logout_action = QAction(QIcon("Resources/Symbols/lock.png"), "Logout", mainWindow)
+        self.logout_action = QAction(QIcon(appctxt.get_resource('Symbols/lock.png')), "Logout", mainWindow)
         self.logout_action.setCheckable(False)
         self.logout_action.triggered.connect(login.logout)
 

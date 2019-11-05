@@ -10,7 +10,7 @@ from uis.ui_personen import Ui_Personen
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, mainWindow,personenManager):
+    def setupUi(self, mainWindow,personenManager,appctxt):
         mainWindow.setObjectName("Main Window")
 
         # Body des Programmes im Moment nur ein Hallo World label
@@ -26,7 +26,7 @@ class Ui_MainWindow(object):
         self.personenTab.addPerson(personenManager.persons[1])
         self.tabWidget.addTab(self.personenTab, "Personen")
 
-        mainActions=actions.MainActions(self)
+        mainActions=actions.MainActions(self,appctxt)
         # erstellt die Toolbar
         main_toolbar=setupMainToolbar(mainActions)
         self.addToolBar(main_toolbar)

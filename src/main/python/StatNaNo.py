@@ -25,15 +25,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
 
-
-#enthaelt die Eventschleife, nur eine pro Programm
-app = QApplication(sys.argv)
-
 window = MainWindow()
 window.show()
 
-# startete die Eventschleife
-app.exec_()
 
 #--------------------------------
 # test code
